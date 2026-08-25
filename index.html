@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Live Room - Multi Stream</title>
+    <title>Luxury Live Room - Custom Username</title>
     <style>
         /* BẢNG MÀU LUXURY & CSS CƠ BẢN */
         :root {
@@ -18,7 +18,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #111; /* Thay bằng hình nền Marble nếu muốn */
+            background: #111;
             color: var(--luxury-grey-light);
             margin: 0;
             padding: 15px;
@@ -38,11 +38,11 @@
         /* BỐ CỤC CHÍNH */
         .main-layout {
             display: grid;
-            grid-template-columns: 320px 1fr 320px;
+            grid-template-columns: 340px 1fr 320px;
             gap: 20px;
             max-width: 1600px;
             margin: 0 auto;
-            height: 85vh; /* Chiều cao tổng thể */
+            height: 85vh;
         }
 
         /* PANEL CÔNG CỤ */
@@ -56,7 +56,7 @@
             text-align: left;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             overflow-y: auto;
         }
 
@@ -73,7 +73,7 @@
         }
 
         /* KHU VỰC ĐIỀU KHIỂN & INPUT */
-        .control-group { margin-bottom: 10px; }
+        .control-group { margin-bottom: 5px; }
         .control-group label { font-size: 13px; color: var(--luxury-gold); margin-bottom: 5px; display: block;}
         
         select, input {
@@ -145,11 +145,11 @@
             position: absolute;
             bottom: 10px;
             left: 10px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.85);
             color: var(--luxury-gold);
-            padding: 4px 8px;
+            padding: 5px 10px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             border: 1px solid rgba(198, 156, 109, 0.5);
         }
@@ -181,10 +181,14 @@
     
     <div class="main-layout">
         
-        <!-- CỘT TRÁI: QUẢN LÝ PHÒNG & STREAM -->
         <div class="panel">
-            <h3>QUẢN LÝ PHÒNG</h3>
+            <h3>ĐĂNG KÝ THÔNG TIN</h3>
             
+            <div class="control-group">
+                <label>Tên Người Dùng (Biệt danh):</label>
+                <input type="text" id="usernameInput" placeholder="VD: GamerPro99">
+            </div>
+
             <div class="control-group">
                 <label>Tên Phòng (Viết liền, không dấu):</label>
                 <input type="text" id="roomInput" placeholder="VD: phong-cua-boss">
@@ -197,7 +201,7 @@
             
             <p id="roomStatus" style="font-size: 12px; color: var(--luxury-maroon); text-align: center; margin: 0;"></p>
 
-            <hr style="border-color: rgba(198, 156, 109, 0.2); width: 100%; margin: 10px 0;">
+            <hr style="border-color: rgba(198, 156, 109, 0.2); width: 100%; margin: 5px 0;">
 
             <h3>CẤU HÌNH LIVE</h3>
             <div class="flex-row control-group">
@@ -210,7 +214,7 @@
                     </select>
                 </div>
                 <div>
-                    <label>Tốc độ khung hình (FPS):</label>
+                    <label>FPS:</label>
                     <select id="fpsSelect">
                         <option value="30" selected>30 FPS</option>
                         <option value="60">60 FPS</option>
@@ -222,25 +226,22 @@
             <button class="btn-maroon" id="btnStopStream" style="display:none;">Dừng Phát Live</button>
         </div>
 
-        <!-- CỘT GIỮA: MÀN HÌNH VIDEO GRID -->
         <div class="video-grid" id="videoGrid">
-            <!-- Video sẽ được thêm tự động bằng JS -->
-        </div>
+            </div>
 
-        <!-- CỘT PHẢI: CHAT VÀ THÔNG TIN -->
         <div class="panel">
             <h3>KÊNH TƯƠNG TÁC</h3>
             <div class="chat-box">
                 <div class="chat-messages" id="chatMessages">
-                    <p><span class="sys-msg">Hệ Thống:</span> Hãy tạo hoặc vào phòng để bắt đầu.</p>
+                    <p><span class="sys-msg">Hệ Thống:</span> Hãy nhập tên và chọn phòng để bắt đầu.</p>
                 </div>
                 <div class="flex-row" style="gap:5px;">
                     <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." disabled>
                     <button class="btn-gold" id="btnSendChat" style="width: 80px;" disabled>Gửi</button>
                 </div>
             </div>
-            <div style="margin-top: 15px; font-size: 12px; color: var(--luxury-grey-medium);">
-                <p>Số người trong phòng: <strong id="memberCount" style="color:var(--luxury-gold)">0</strong></p>
+            <div style="margin-top: 10px; font-size: 12px; color: var(--luxury-grey-medium);">
+                <p>Thành viên trong phòng: <strong id="memberCount" style="color:var(--luxury-gold)">0</strong></p>
             </div>
         </div>
     </div>
@@ -249,14 +250,15 @@
         // --- BIẾN TOÀN CỤC ---
         let peer = null;
         let myId = "";
+        let myUsername = "Khách";
         let isHost = false;
         let myStream = null;
         
-        let connectedPeers = new Set(); // Chứa ID của mọi người trong phòng
-        let dataConnections = {}; // Lưu kết nối Chat (Data)
-        let mediaCalls = {};      // Lưu kết nối Video (Media)
+        let connectedPeers = new Set();  // Danh sách ID
+        let peerUsernames = {};          // Lưu tên tương ứng với ID: { peerId: username }
+        let dataConnections = {};        // Lưu kết nối Data
+        let mediaCalls = {};             // Lưu kết nối Video
 
-        // STUN Server vượt tường lửa
         const peerConfig = {
             config: { 'iceServers': [ { urls: 'stun:stun.l.google.com:19302' } ] }
         };
@@ -265,23 +267,34 @@
         const videoGrid = document.getElementById('videoGrid');
         const memberCount = document.getElementById('memberCount');
 
+        // Lấy tên người dùng hoặc tự sinh tên mặc định
+        function getEnteredUsername() {
+            const val = document.getElementById('usernameInput').value.trim();
+            if (val) return val;
+            return "Khách_" + Math.floor(1000 + Math.random() * 9000);
+        }
+
         // --- 1. XỬ LÝ VÀO / TẠO PHÒNG ---
         document.getElementById('btnCreateRoom').addEventListener('click', () => {
             const rName = document.getElementById('roomInput').value.trim();
             if(!rName) return alert("Vui lòng nhập tên phòng!");
             
-            initPeer('room-' + rName, true); // Đặt ID cố định cho Host
+            myUsername = getEnteredUsername();
+            if(isHost) myUsername += " (Host♛)";
+            
+            initPeer('room-' + rName, true);
         });
 
         document.getElementById('btnJoinRoom').addEventListener('click', () => {
             const rName = document.getElementById('roomInput').value.trim();
             if(!rName) return alert("Vui lòng nhập tên phòng muốn vào!");
             
-            initPeer(null, false, rName); // Lấy ID ngẫu nhiên, sau đó kết nối Host
+            myUsername = getEnteredUsername();
+            initPeer(null, false, rName);
         });
 
         function initPeer(customId, hostMode, targetRoomName = "") {
-            if (peer) peer.destroy(); // Hủy kết nối cũ nếu có
+            if (peer) peer.destroy();
             
             roomStatus.innerText = "Đang khởi tạo...";
             peer = customId ? new Peer(customId, peerConfig) : new Peer(peerConfig);
@@ -289,15 +302,19 @@
             peer.on('open', (id) => {
                 myId = id;
                 isHost = hostMode;
-                roomStatus.innerText = isHost ? "Đã tạo phòng thành công!" : "Đã lấy ID, đang vào phòng...";
+                if(isHost && !myUsername.includes("Host")) myUsername += "♛";
+                
+                peerUsernames[myId] = myUsername; // Lưu tên mình
+                
+                roomStatus.innerText = isHost ? "Đã tạo phòng thành công!" : "Đã tham gia phòng!";
                 roomStatus.style.color = "var(--luxury-gold)";
                 
                 document.getElementById('btnStartStream').disabled = false;
                 document.getElementById('chatInput').disabled = false;
                 document.getElementById('btnSendChat').disabled = false;
+                document.getElementById('usernameInput').disabled = true; // Khóa không cho đổi tên giữa chừng
 
                 if (!isHost) {
-                    // Nếu là khách, kết nối tới Host để xin danh sách phòng
                     const hostConn = peer.connect('room-' + targetRoomName);
                     setupDataConnection(hostConn);
                 }
@@ -305,12 +322,9 @@
                 updateMemberCount();
             });
 
-            // Lắng nghe người khác kết nối Data (Chat/Signaling) tới mình
             peer.on('connection', (conn) => { setupDataConnection(conn); });
 
-            // Lắng nghe người khác gọi Video tới mình
             peer.on('call', (call) => {
-                // Trả lời cuộc gọi (nếu mình đang stream thì gửi stream của mình lại cho họ)
                 call.answer(myStream);
                 
                 call.on('stream', (remoteStream) => {
@@ -324,36 +338,46 @@
 
             peer.on('error', (err) => {
                 if (err.type === 'unavailable-id') {
-                    alert("Tên phòng đã có người tạo (Host). Vui lòng chọn 'Vào Phòng' hoặc đổi tên khác.");
-                    roomStatus.innerText = "Lỗi tạo phòng.";
+                    alert("Tên phòng này đã có người tạo. Vui lòng nhấn 'VÀO PHÒNG' hoặc chọn tên phòng khác.");
+                    roomStatus.innerText = "Lỗi trùng tên phòng.";
                 } else {
                     console.error(err);
                 }
             });
         }
 
-        // --- 2. XỬ LÝ MẠNG LƯỚI (MESH SIGNALING) ---
+        // --- 2. XỬ LÝ ĐỒNG BỘ TÊN NGUYỜI DÙNG QUA MẠNG P2P ---
         function setupDataConnection(conn) {
             conn.on('open', () => {
                 connectedPeers.add(conn.peer);
                 dataConnections[conn.peer] = conn;
-                updateMemberCount();
 
-                // LƯỚI KẾT NỐI: Nếu mình là Host, mình giới thiệu người mới cho cả phòng
+                // Gửi tên của MÌNH cho người vừa kết nối
+                conn.send({ type: 'HANDSHAKE', username: myUsername });
+
                 if (isHost) {
-                    // 1. Gửi toàn bộ danh sách phòng cho người mới
-                    const peersArray = Array.from(connectedPeers).filter(id => id !== conn.peer);
-                    conn.send({ type: 'PEER_LIST', peers: peersArray });
-                    
-                    // 2. Báo cho những người cũ biết có người mới vào
-                    peersArray.forEach(id => {
-                        dataConnections[id].send({ type: 'NEW_PEER', peer: conn.peer });
+                    // Host gửi danh sách tất cả các Member + Tên của họ cho người mới
+                    const peersData = Array.from(connectedPeers)
+                        .filter(id => id !== conn.peer)
+                        .map(id => ({ id: id, username: peerUsernames[id] || "Khách" }));
+
+                    conn.send({ type: 'PEER_LIST', peers: peersData });
+
+                    // Báo cho những người cũ biết có người mới
+                    peersData.forEach(p => {
+                        if(dataConnections[p.id]) {
+                            dataConnections[p.id].send({ 
+                                type: 'NEW_PEER', 
+                                peer: conn.peer, 
+                                username: peerUsernames[conn.peer] || "Khách" 
+                            });
+                        }
                     });
                 }
                 
-                sysLog(`[${conn.peer.substring(0,6)}...] đã tham gia.`);
-                
-                // Nếu mình ĐANG phát live, tự động gọi video tới người mới vào
+                updateMemberCount();
+
+                // Nếu mình ĐANG phát live, tự động gọi cho thành viên mới
                 if (myStream) {
                     const call = peer.call(conn.peer, myStream);
                     call.on('stream', (remoteStream) => addVideoStream(conn.peer, remoteStream));
@@ -361,17 +385,25 @@
             });
 
             conn.on('data', (data) => {
-                if (data.type === 'PEER_LIST') {
-                    // Mình mới vào, Host gửi danh sách -> kết nối với tất cả
-                    data.peers.forEach(id => {
-                        if (id !== myId && !dataConnections[id]) {
-                            const newConn = peer.connect(id);
+                if (data.type === 'HANDSHAKE') {
+                    // Nhận tên từ kết nối mới
+                    peerUsernames[conn.peer] = data.username;
+                    sysLog(`<strong>${data.username}</strong> đã tham gia phòng.`);
+                    updateVideoLabel(conn.peer);
+                }
+                else if (data.type === 'PEER_LIST') {
+                    // Người mới nhận danh sách từ Host
+                    data.peers.forEach(p => {
+                        peerUsernames[p.id] = p.username;
+                        if (p.id !== myId && !dataConnections[p.id]) {
+                            const newConn = peer.connect(p.id);
                             setupDataConnection(newConn);
                         }
                     });
                 } 
                 else if (data.type === 'NEW_PEER') {
-                    // Host báo có người mới -> kết nối với người mới
+                    // Nhận thông báo người mới từ Host
+                    peerUsernames[data.peer] = data.username;
                     if (data.peer !== myId && !dataConnections[data.peer]) {
                         const newConn = peer.connect(data.peer);
                         setupDataConnection(newConn);
@@ -383,43 +415,41 @@
             });
 
             conn.on('close', () => {
+                const name = peerUsernames[conn.peer] || conn.peer.substring(0,5);
+                sysLog(`<strong>${name}</strong> đã rời khỏi phòng.`);
+                
                 connectedPeers.delete(conn.peer);
                 delete dataConnections[conn.peer];
+                delete peerUsernames[conn.peer];
+                
                 removeVideoStream(conn.peer);
                 updateMemberCount();
-                sysLog(`[${conn.peer.substring(0,6)}...] đã rời đi.`);
             });
         }
 
-        // --- 3. XỬ LÝ CHIA SẺ MÀN HÌNH (LIVE) TÁCH RIÊNG ĐỘ PHÂN GIẢI & FPS ---
+        // --- 3. PHÁT LIVE MÀN HÌNH ---
         document.getElementById('btnStartStream').addEventListener('click', async () => {
             const resVal = parseInt(document.getElementById('resSelect').value);
             const fpsVal = parseInt(document.getElementById('fpsSelect').value);
             
-            // Tính toán Width x Height dựa trên độ phân giải chọn
             let w = 1280, h = 720;
             if(resVal === 1080) { w = 1920; h = 1080; }
             if(resVal === 480) { w = 854; h = 480; }
 
-            const videoConstraints = { width: w, height: h, frameRate: fpsVal };
-
             try {
                 myStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: videoConstraints,
-                    audio: true // Vẫn nhớ nhắc người dùng chọn chia sẻ âm thanh hệ thống
+                    video: { width: w, height: h, frameRate: fpsVal },
+                    audio: true
                 });
 
-                // Hiển thị luồng của chính mình lên UI
                 addVideoStream('me', myStream, true);
 
-                // NÚT BẤM UI
                 document.getElementById('btnStartStream').style.display = 'none';
                 document.getElementById('btnStopStream').style.display = 'block';
 
-                // Lắng nghe sự kiện tắt share màn hình mặc định của trình duyệt
                 myStream.getVideoTracks()[0].onended = stopStream;
 
-                // GỌI VIDEO TỚI TẤT CẢ MỌI NGƯỜI TRONG PHÒNG
+                // Gọi video tới toàn bộ thành viên trong phòng
                 connectedPeers.forEach(id => {
                     const call = peer.call(id, myStream);
                     mediaCalls[id] = call;
@@ -442,14 +472,11 @@
             
             document.getElementById('btnStartStream').style.display = 'block';
             document.getElementById('btnStopStream').style.display = 'none';
-            
-            // Xóa các cuộc gọi cũ để tránh lỗi (PeerJS sẽ tự ngắt khi stream track bị stop)
             mediaCalls = {};
         }
 
-        // --- 4. XỬ LÝ UI VIDEO & CHAT ---
+        // --- 4. HIỂN THỊ VIDEO VỚI TÊN NGUYỜI DÙNG ---
         function addVideoStream(id, stream, isMe = false) {
-            // Tránh duplicate video
             if (document.getElementById('video-wrap-' + id)) return;
 
             const wrap = document.createElement('div');
@@ -461,15 +488,26 @@
             vid.autoplay = true;
             vid.playsInline = true;
             vid.controls = !isMe;
-            if (isMe) vid.muted = true; // Chống dội âm của chính mình
+            if (isMe) vid.muted = true;
 
             const label = document.createElement('div');
             label.className = 'video-label';
-            label.innerText = isMe ? "Bạn đang live" : "Khách: " + id.substring(0,5);
+            label.id = 'video-label-' + id;
+            
+            // Lấy tên từ danh sách peerUsernames
+            const displayName = isMe ? `${myUsername} (Bạn)` : (peerUsernames[id] || `Thành viên`);
+            label.innerText = `🔴 ${displayName}`;
 
             wrap.appendChild(vid);
             wrap.appendChild(label);
             videoGrid.appendChild(wrap);
+        }
+
+        function updateVideoLabel(id) {
+            const label = document.getElementById('video-label-' + id);
+            if (label && peerUsernames[id]) {
+                label.innerText = `🔴 ${peerUsernames[id]}`;
+            }
         }
 
         function removeVideoStream(id) {
@@ -478,11 +516,10 @@
         }
 
         function updateMemberCount() {
-            // Số lượng người trong phòng = những người kết nối + chính mình
             memberCount.innerText = connectedPeers.size + 1;
         }
 
-        // --- CHAT SYSTEM ---
+        // --- 5. HỆ THỐNG CHAT VỚI TÊN TỰ CHỌN ---
         document.getElementById('btnSendChat').addEventListener('click', sendChat);
         document.getElementById('chatInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendChat(); });
 
@@ -491,13 +528,11 @@
             const msg = input.value.trim();
             if (!msg) return;
 
-            const senderName = isHost ? "Host♛" : myId.substring(0,4);
-            const dataPacket = { type: 'CHAT', sender: senderName, msg: msg };
+            const dataPacket = { type: 'CHAT', sender: myUsername, msg: msg };
             
             appendChat("Bạn", msg);
             input.value = '';
 
-            // Bắn tin nhắn cho tất cả những người đang kết nối với mình
             connectedPeers.forEach(id => {
                 if (dataConnections[id] && dataConnections[id].open) {
                     dataConnections[id].send(dataPacket);
