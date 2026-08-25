@@ -3,155 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nền Tảng Live Stream Mini</title>
+    <title>Nền Tảng Live Stream Mini Luxury</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e24; color: white; margin: 0; padding: 20px; text-align: center; }
-        h1 { color: #ff6b6b; }
-        
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; margin: 0 auto; }
-        
-        /* Box điều khiển */
-        .box { background: #2b2b36; padding: 20px; border-radius: 10px; width: 100%; max-width: 450px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .box h3 { margin-top: 0; color: #4ecdc4; }
-        
-        select, input { padding: 10px; border-radius: 5px; border: none; font-size: 16px; margin-bottom: 10px; width: 90%; }
-        button { padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; transition: 0.2s; width: 95%; margin-top: 10px;}
-        
-        .btn-live { background-color: #ff6b6b; color: white; }
-        .btn-live:hover { background-color: #ff4757; }
-        
-        .btn-watch { background-color: #4ecdc4; color: #1e1e24; }
-        .btn-watch:hover { background-color: #45b7aa; }
+        /* PHẦN 1: CẤU HÌNH MÀU SẮC LUXURY */
+        :root {
+            /* Bảng màu chính từ image_0.png */
+            --luxury-gold: #c69c6d;
+            --luxury-maroon: #8d1c1c;
+            --luxury-grey-light: #e5e5e5;
+            --luxury-grey-medium: #888888;
+            --luxury-black: #000000;
+            
+            /* Màu nền và text phụ */
+            --bg-marble: url('path_to_your_marble_background.jpg'), #111; /* Thay bằng link hình marble thật */
+            --panel-bg: rgba(20, 20, 20, 0.85); /* Hiệu ứng kính mờ cho panel */
+            --text-main: var(--luxury-grey-light);
+            --text-secondary: var(--luxury-grey-medium);
+            
+            /* Gradient vàng kim */
+            --gold-gradient: linear-gradient(45deg, #c69c6d, #d9b88f, #f2d7b1, #d9b88f, #c69c6d);
+        }
 
-        /* Khung video */
-        .video-container { width: 100%; max-width: 1000px; margin: 20px auto; }
-        video { width: 100%; background: black; border-radius: 10px; border: 3px solid #4ecdc4; box-shadow: 0 0 15px rgba(78, 205, 196, 0.4); }
+        /* PHẦN 2: STYLE GIAO DIỆN CHÍNH */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-marble) fixed;
+            background-size: cover;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Tiêu đề gradient gold luxury */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3em;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 3px 6px rgba(198, 156, 109, 0.4);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        /* Bố cục grid xa hoa */
+        .luxury-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Panel kính mờ với viền gold */
+        .box {
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(198, 156, 109, 0.3); /* Viền gold mỏng */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            text-align: left;
+        }
+
+        /* Tiêu đề panel sang trọng */
+        .box h3 {
+            font-family: 'Playfair Display', serif;
+            margin-top: 0;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5em;
+            border-bottom: 1px solid var(--luxury-maroon);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Input luxury */
+        select, input {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--luxury-grey-medium);
+            font-size: 15px;
+            margin-bottom: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            background: #111;
+            color: var(--luxury-gold);
+        }
         
-        #myIdDisplay { color: #feca57; font-weight: bold; font-size: 18px; margin: 10px 0; word-break: break-all; }
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--luxury-gold);
+            box-shadow: 0 0 5px rgba(198, 156, 109, 0.5);
+        }
+
+        /* Nút luxury */
+        button {
+            font-family: 'Poppins', sans-serif;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            margin-top: 8px;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Nút Phát Live - Màu Gold Luxury */
+        .btn-live {
+            background: var(--gold-gradient);
+            color: var(--luxury-black);
+            text-transform: uppercase;
+        }
+        .btn-live:hover {
+            box-shadow: 0 5px 15px rgba(198, 156, 109, 0.7);
+        }
+
+        /* Nút Dừng Live - Màu Maroon Thâm Thẩm */
+        .btn-stop {
+            background-color: var(--luxury-maroon);
+            color: #f2f2f2;
+            display: none;
+        }
+        .btn-stop:hover {
+            background-color: #a32222;
+        }
+
+        /* Nút Vào Xem - Màu Xám/Gold */
+        .btn-watch {
+            background-color: var(--luxury-black);
+            color: var(--luxury-gold);
+            border: 1px solid var(--luxury-gold);
+        }
+        .btn-watch:hover {
+            background: var(--gold-gradient);
+            color: var(--luxury-black);
+        }
+
+        .note {
+            font-size: 12px;
+            color: var(--luxury-gold);
+            margin-top: 0;
+            opacity: 0.8;
+        }
+
+        /* PHẦN 3: STYLE CHÍNH CHO VIDEO */
+        .video-container {
+            grid-column: 2 / 3;
+            grid-row: 1 / 3;
+            position: relative;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: rgba(0,0,0,0.8);
+            border-radius: 12px;
+            border: 2px solid var(--luxury-gold);
+            box-shadow: 0 0 30px rgba(198, 156, 109, 0.3);
+        }
+
+        #myIdDisplay {
+            color: var(--luxury-gold);
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 15px 0;
+            word-break: break-all;
+            text-align: center;
+            background: #111;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px dashed rgba(198, 156, 109, 0.5);
+        }
+
+        /* PHẦN 4: STYLE CHAT LUXURY */
+        .chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            background: #111;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            border: 1px solid rgba(198, 156, 109, 0.2);
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--luxury-gold);
+            border-radius: 4px;
+        }
+
+        .chat-messages p {
+            margin: 8px 0;
+            border-bottom: 1px solid rgba(136, 136, 136, 0.1);
+            padding-bottom: 8px;
+        }
+        
+        .chat-messages .sender {
+            font-weight: bold;
+            color: var(--luxury-gold);
+            margin-right: 5px;
+        }
+        
+        /* Hiệu ứng chat khi là Hệ Thống */
+        .chat-messages .system {
+            color: var(--luxury-maroon);
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input-area input {
+            margin-bottom: 0;
+            border-color: rgba(198, 156, 109, 0.4);
+        }
+        
+        .chat-input-area button {
+            margin-top: 0;
+            width: 100px;
+            background: var(--gold-gradient);
+            color: var(--luxury-black);
+        }
+        
+        /* Phông chữ serif sang trọng cho tiêu đề panel */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
     </style>
-    <!-- Thư viện kết nối mạng ngang hàng miễn phí -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 </head>
 <body>
 
-    <h1>🎮 Nền Tảng Stream Game Của Tớ 🎮</h1>
+    <h1><span style="font-size: 0.8em; opacity: 0.8;">♛</span> Nền Tảng Stream Luxury <span style="font-size: 0.8em; opacity: 0.8;">♛</span></h1>
     
-    <div class="container">
-        <!-- KHU VỰC PHÁT LIVE -->
+    <div class="luxury-container">
+        <!-- KHU VỰC PHÁT LIVE (TRÁI) -->
         <div class="box">
-            <h3>🔴 Bắt Đầu Live Stream</h3>
+            <h3>🔴 PHÁT LIVE</h3>
             <p>Chọn chất lượng:</p>
             <select id="resolution">
                 <option value="720">HD (720p - 30FPS)</option>
                 <option value="1080" selected>Full HD (1080p - 60FPS)</option>
             </select>
+            <p class="note">⚠️ Nhớ tick "Chia sẻ âm thanh hệ thống" để có tiếng game nhé!</p>
             <button class="btn-live" id="startBtn">Phát Cửa Sổ Game</button>
-            <p>Mã kênh của bạn (Gửi cho bạn bè để họ nhập bên kia):</p>
+            <button class="btn-stop" id="stopBtn">⬛ Dừng Live</button>
+            
+            <p style="text-align: center; margin-top: 15px; color: var(--luxury-grey-medium);">Mã kênh luxury:</p>
             <div id="myIdDisplay">Đang tải mã kênh...</div>
         </div>
 
-        <!-- KHU VỰC XEM LIVE -->
+        <!-- MÀN HÌNH VIDEO (GIỮA) -->
+        <div class="video-container">
+            <video id="videoElement" autoplay playsinline controls></video>
+        </div>
+
+        <!-- KHU VỰC CHAT (PHẢI) -->
         <div class="box">
-            <h3>🟢 Xem Người Khác Live</h3>
+            <h3>💬 KÊNH CHAT TƯƠNG TÁC</h3>
+            <div id="chatMessages" class="chat-messages">
+                <p><span class="system">Hệ Thống:</span> Chào mừng đến với kênh stream luxury.</p>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Nhập tin nhắn quý phái...">
+                <button id="sendBtn">Gửi</button>
+            </div>
+        </div>
+
+        <!-- KHU VỰC XEM LIVE (DƯỚI TRÁI) -->
+        <div class="box" style="grid-column: 1 / 2; grid-row: 2 / 3;">
+            <h3>🟢 XEM LIVE</h3>
             <p>Nhập mã kênh của người đang phát:</p>
             <input type="text" id="streamerId" placeholder="Ví dụ: abc-123-xyz">
             <button class="btn-watch" id="watchBtn">Vào Xem</button>
-            <p id="watchStatus">Đang chờ kết nối...</p>
+            <p id="watchStatus" style="text-align: center; margin-top: 10px;">Đang chờ kết nối...</p>
         </div>
     </div>
 
-    <!-- MÀN HÌNH VIDEO -->
-    <div class="video-container">
-        <video id="videoElement" autoplay playsinline controls></video>
-    </div>
-
     <script>
-        // Khởi tạo PeerJS (tự động cấp 1 ID ngẫu nhiên)
-        const peer = new Peer();
-        const videoElement = document.getElementById('videoElement');
-        let myStream = null;
-
-        // Khi kết nối server thành công, hiển thị ID của mình
-        peer.on('open', (id) => {
-            document.getElementById('myIdDisplay').innerText = id;
+        /* PHẦN 5: TOÀN BỘ CHỨC NĂNG PEERJS ĐƯỢC GIỮ NGUYÊN */
+        const peer = new Peer({
+            config: {
+                'iceServers': [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            }
         });
 
-        // ==========================================
-        // 1. TÍNH NĂNG: BẤM LÀ LIVE (CHỌN ĐỘ PHÂN GIẢI)
-        // ==========================================
+        const videoElement = document.getElementById('videoElement');
+        let myStream = null;
+        
+        let isStreamer = false;
+        let activeConnections = [];
+        let viewerConnection = null;
+        let chatName = "Quý Khách_" + Math.floor(Math.random() * 1000);
+
+        peer.on('open', (id) => {
+            document.getElementById('myIdDisplay').innerText = id;
+            chatName = isStreamer ? "Streamer" : "Khách_" + id.substring(0, 4);
+        });
+
         document.getElementById('startBtn').addEventListener('click', async () => {
             const resVal = document.getElementById('resolution').value;
-            
-            // Thiết lập cấu hình video dựa trên lựa chọn
-            let videoConstraints = {};
-            if (resVal === "1080") {
-                videoConstraints = { width: 1920, height: 1080, frameRate: 60 };
-            } else {
-                videoConstraints = { width: 1280, height: 720, frameRate: 30 };
-            }
+            let videoConstraints = resVal === "1080" 
+                ? { width: 1920, height: 1080, frameRate: 60 } 
+                : { width: 1280, height: 720, frameRate: 30 };
 
             try {
-                // Bật bảng chọn cửa sổ (giống Discord)
                 myStream = await navigator.mediaDevices.getDisplayMedia({
                     video: videoConstraints,
                     audio: true
                 });
                 
-                // Chiếu lên màn hình của mình cho mình xem trước
                 videoElement.srcObject = myStream;
-                videoElement.muted = true; // Tránh vọng âm
-                document.getElementById('startBtn').innerText = "🔴 Đang Phát Live...";
+                videoElement.muted = true;
+                isStreamer = true;
+                chatName = "Streamer♛";
+
+                document.getElementById('startBtn').style.display = "none";
+                document.getElementById('stopBtn').style.display = "block";
+                
+                myStream.getVideoTracks()[0].onended = stopLive;
 
             } catch (error) {
                 alert("Bạn đã hủy chia sẻ màn hình hoặc trình duyệt không hỗ trợ!");
             }
         });
 
-        // Bất cứ ai kết nối tới mã kênh của bạn, tự động gửi video cho họ
-        peer.on('connection', (conn) => {
+        document.getElementById('stopBtn').addEventListener('click', stopLive);
+
+        function stopLive() {
             if (myStream) {
-                peer.call(conn.peer, myStream);
+                myStream.getTracks().forEach(track => track.stop());
+                myStream = null;
             }
+            videoElement.srcObject = null;
+            document.getElementById('startBtn').style.display = "block";
+            document.getElementById('stopBtn').style.display = "none";
+            isStreamer = false;
+            
+            activeConnections.forEach(conn => conn.send({ type: 'system', msg: 'Hệ Thống: Streamer đã tắt máy.' }));
+        }
+
+        peer.on('connection', (conn) => {
+            activeConnections.push(conn);
+            
+            conn.on('data', (data) => {
+                if(data.type === 'chat') {
+                    appendChatMessage(data.sender, data.msg);
+                    activeConnections.forEach(c => {
+                        if (c.peer !== conn.peer) c.send(data);
+                    });
+                }
+            });
+
+            conn.on('close', () => {
+                activeConnections = activeConnections.filter(c => c.peer !== conn.peer);
+            });
         });
-        
-        // Nếu họ dùng hàm call (gọi trực tiếp)
+
         peer.on('call', (call) => {
             if (myStream) {
                 call.answer(myStream);
+            } else {
+                call.close();
             }
         });
 
-        // ==========================================
-        // 2. TÍNH NĂNG: VÀO XEM NGƯỜI KHÁC
-        // ==========================================
         document.getElementById('watchBtn').addEventListener('click', () => {
             const streamerId = document.getElementById('streamerId').value.trim();
             const statusText = document.getElementById('watchStatus');
             
-            if (!streamerId) {
-                statusText.innerText = "Vui lòng nhập mã kênh!";
-                statusText.style.color = "red";
-                return;
-            }
+            if (!streamerId) return;
 
             statusText.innerText = "Đang kết nối tới " + streamerId + "...";
-            statusText.style.color = "white";
+            statusText.style.color = "var(--luxury-gold)";
 
-            // Gọi tới người phát
             const call = peer.call(streamerId, null);
-            
             call.on('stream', (remoteStream) => {
                 videoElement.srcObject = remoteStream;
-                videoElement.muted = false; // Bật tiếng cho người xem
+                videoElement.muted = false;
                 statusText.innerText = "🟢 Đang xem thành công!";
-                statusText.style.color = "#4ecdc4";
+                statusText.style.color = "var(--luxury-gold)";
+            });
+            call.on('close', () => {
+                statusText.innerText = "❌ Streamer đã tắt Live.";
+                statusText.style.color = "var(--luxury-maroon)";
+                videoElement.srcObject = null;
             });
 
-            call.on('error', () => {
-                statusText.innerText = "Lỗi kết nối. Vui lòng kiểm tra lại mã kênh.";
-                statusText.style.color = "red";
+            viewerConnection = peer.connect(streamerId);
+            viewerConnection.on('open', () => {
+                viewerConnection.on('data', (data) => {
+                    if (data.type === 'chat') {
+                        appendChatMessage(data.sender, data.msg);
+                    } else if (data.type === 'system') {
+                        appendChatMessage("Hệ Thống", data.msg, "system");
+                    }
+                });
             });
         });
+
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        document.getElementById('sendBtn').addEventListener('click', sendChat);
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
+
+        function sendChat() {
+            const msg = chatInput.value.trim();
+            if (!msg) return;
+
+            const dataPacket = { type: 'chat', sender: chatName, msg: msg };
+            
+            appendChatMessage("Bạn", msg);
+
+            if (isStreamer) {
+                activeConnections.forEach(conn => conn.send(dataPacket));
+            } else if (viewerConnection && viewerConnection.open) {
+                viewerConnection.send(dataPacket);
+            }
+
+            chatInput.value = '';
+        }
+
+        function appendChatMessage(sender, msg, type = "chat") {
+            const p = document.createElement('p');
+            const isMe = sender === "Bạn";
+            const senderClass = isMe ? "sender me" : "sender";
+            
+            // Xử lý chat hệ thống vs chat thường
+            if (type === "system" || sender === "Hệ Thống") {
+                p.innerHTML = `<span class="system">${msg}</span>`;
+            } else {
+                const isStreamerName = sender.includes('♛');
+                const finalSender = isStreamerName ? `<span style="color:var(--luxury-gold);">${sender}</span>` : sender;
+                p.innerHTML = `<span class="${senderClass}">${finalSender}:</span> ${msg}`;
+            }
+            
+            chatMessages.appendChild(p);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     </script>
 </body>
 </html>
