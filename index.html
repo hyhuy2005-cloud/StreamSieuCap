@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nền Tảng Live Stream Mini</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e24; color: white; margin: 0; padding: 20px; text-align: center; }
+        h1 { color: #ff6b6b; }
+        
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; margin: 0 auto; }
+        
+        /* Box điều khiển */
+        .box { background: #2b2b36; padding: 20px; border-radius: 10px; width: 100%; max-width: 450px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .box h3 { margin-top: 0; color: #4ecdc4; }
+        
+        select, input { padding: 10px; border-radius: 5px; border: none; font-size: 16px; margin-bottom: 10px; width: 90%; }
+        button { padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; transition: 0.2s; width: 95%; margin-top: 10px;}
+        
+        .btn-live { background-color: #ff6b6b; color: white; }
+        .btn-live:hover { background-color: #ff4757; }
+        
+        .btn-watch { background-color: #4ecdc4; color: #1e1e24; }
+        .btn-watch:hover { background-color: #45b7aa; }
+
+        /* Khung video */
+        .video-container { width: 100%; max-width: 1000px; margin: 20px auto; }
+        video { width: 100%; background: black; border-radius: 10px; border: 3px solid #4ecdc4; box-shadow: 0 0 15px rgba(78, 205, 196, 0.4); }
+        
+        #myIdDisplay { color: #feca57; font-weight: bold; font-size: 18px; margin: 10px 0; word-break: break-all; }
+    </style>
+    <!-- Thư viện kết nối mạng ngang hàng miễn phí -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body>
+
+    <h1>🎮 Nền Tảng Stream Game Của Tớ 🎮</h1>
+    
+    <div class="container">
+        <!-- KHU VỰC PHÁT LIVE -->
+        <div class="box">
+            <h3>🔴 Bắt Đầu Live Stream</h3>
+            <p>Chọn chất lượng:</p>
+            <select id="resolution">
+                <option value="720">HD (720p - 30FPS)</option>
+                <option value="1080" selected>Full HD (1080p - 60FPS)</option>
+            </select>
+            <button class="btn-live" id="startBtn">Phát Cửa Sổ Game</button>
+            <p>Mã kênh của bạn (Gửi cho bạn bè để họ nhập bên kia):</p>
+            <div id="myIdDisplay">Đang tải mã kênh...</div>
+        </div>
+
+        <!-- KHU VỰC XEM LIVE -->
+        <div class="box">
+            <h3>🟢 Xem Người Khác Live</h3>
+            <p>Nhập mã kênh của người đang phát:</p>
+            <input type="text" id="streamerId" placeholder="Ví dụ: abc-123-xyz">
+            <button class="btn-watch" id="watchBtn">Vào Xem</button>
+            <p id="watchStatus">Đang chờ kết nối...</p>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH VIDEO -->
+    <div class="video-container">
+        <video id="videoElement" autoplay playsinline controls></video>
+    </div>
+
+    <script>
+        // Khởi tạo PeerJS (tự động cấp 1 ID ngẫu nhiên)
+        const peer = new Peer();
+        const videoElement = document.getElementById('videoElement');
+        let myStream = null;
+
+        // Khi kết nối server thành công, hiển thị ID của mình
+        peer.on('open', (id) => {
+            document.getElementById('myIdDisplay').innerText = id;
+        });
+
+        // ==========================================
+        // 1. TÍNH NĂNG: BẤM LÀ LIVE (CHỌN ĐỘ PHÂN GIẢI)
+        // ==========================================
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            const resVal = document.getElementById('resolution').value;
+            
+            // Thiết lập cấu hình video dựa trên lựa chọn
+            let videoConstraints = {};
+            if (resVal === "1080") {
+                videoConstraints = { width: 1920, height: 1080, frameRate: 60 };
+            } else {
+                videoConstraints = { width: 1280, height: 720, frameRate: 30 };
+            }
+
+            try {
+                // Bật bảng chọn cửa sổ (giống Discord)
+                myStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: videoConstraints,
+                    audio: true
+                });
+                
+                // Chiếu lên màn hình của mình cho mình xem trước
+                videoElement.srcObject = myStream;
+                videoElement.muted = true; // Tránh vọng âm
+                document.getElementById('startBtn').innerText = "🔴 Đang Phát Live...";
+
+            } catch (error) {
+                alert("Bạn đã hủy chia sẻ màn hình hoặc trình duyệt không hỗ trợ!");
+            }
+        });
+
+        // Bất cứ ai kết nối tới mã kênh của bạn, tự động gửi video cho họ
+        peer.on('connection', (conn) => {
+            if (myStream) {
+                peer.call(conn.peer, myStream);
+            }
+        });
+        
+        // Nếu họ dùng hàm call (gọi trực tiếp)
+        peer.on('call', (call) => {
+            if (myStream) {
+                call.answer(myStream);
+            }
+        });
+
+        // ==========================================
+        // 2. TÍNH NĂNG: VÀO XEM NGƯỜI KHÁC
+        // ==========================================
+        document.getElementById('watchBtn').addEventListener('click', () => {
+            const streamerId = document.getElementById('streamerId').value.trim();
+            const statusText = document.getElementById('watchStatus');
+            
+            if (!streamerId) {
+                statusText.innerText = "Vui lòng nhập mã kênh!";
+                statusText.style.color = "red";
+                return;
+            }
+
+            statusText.innerText = "Đang kết nối tới " + streamerId + "...";
+            statusText.style.color = "white";
+
+            // Gọi tới người phát
+            const call = peer.call(streamerId, null);
+            
+            call.on('stream', (remoteStream) => {
+                videoElement.srcObject = remoteStream;
+                videoElement.muted = false; // Bật tiếng cho người xem
+                statusText.innerText = "🟢 Đang xem thành công!";
+                statusText.style.color = "#4ecdc4";
+            });
+
+            call.on('error', () => {
+                statusText.innerText = "Lỗi kết nối. Vui lòng kiểm tra lại mã kênh.";
+                statusText.style.color = "red";
+            });
+        });
+    </script>
+</body>
+</html>
