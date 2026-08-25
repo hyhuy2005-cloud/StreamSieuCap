@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Live Room - Pro Stream Max Quality</title>
+    <title>Luxury Live Room - Ultimate Version</title>
     <style>
-        /* BẢNG MÀU LUXURY & CSS CƠ BẢN */
+        /* ==========================================
+           BẢNG MÀU LUXURY & CSS CƠ BẢN
+           ========================================== */
         :root {
             --luxury-gold: #c69c6d;
             --luxury-maroon: #8d1c1c;
@@ -18,11 +20,12 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #111;
+            background: #111; /* Thay bằng hình nền vân đá marble sẽ rất đẹp */
             color: var(--luxury-grey-light);
             margin: 0;
             padding: 15px;
             text-align: center;
+            overflow-x: hidden;
         }
 
         h1 {
@@ -35,15 +38,72 @@
             letter-spacing: 2px;
         }
 
-        /* BỐ CỤC CHÍNH */
+        /* ==========================================
+           MODAL CHÀO MỪNG (NHẬP TÊN)
+           ========================================== */
+        #welcomeModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-content {
+            background: var(--panel-bg);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid var(--luxury-gold);
+            box-shadow: 0 0 30px rgba(198, 156, 109, 0.3);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--luxury-gold);
+            margin-top: 0;
+            font-size: 2em;
+        }
+
+        .modal-content input {
+            padding: 15px;
+            font-size: 16px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid var(--luxury-gold);
+            background: #000;
+            color: var(--luxury-gold);
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .modal-content button {
+            padding: 15px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        /* ==========================================
+           BỐ CỤC CHÍNH (Được ẩn lúc đầu)
+           ========================================== */
         .main-layout {
-            display: grid;
+            display: none; /* Ẩn cho đến khi nhập tên */
             grid-template-columns: 360px 1fr 320px;
             gap: 20px;
             max-width: 1600px;
             margin: 0 auto;
             height: 85vh;
+            animation: fadeIn 1s ease;
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* PANEL CÔNG CỤ */
         .panel {
@@ -56,7 +116,7 @@
             text-align: left;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
             overflow-y: auto;
         }
 
@@ -113,7 +173,7 @@
         }
 
         .btn-gold { background: var(--gold-gradient); color: var(--luxury-black); }
-        .btn-gold:hover { box-shadow: 0 0 15px rgba(198, 156, 109, 0.5); }
+        .btn-gold:hover { box-shadow: 0 0 15px rgba(198, 156, 109, 0.5); transform: translateY(-2px); }
         .btn-maroon { background: var(--luxury-maroon); color: white; }
         .btn-maroon:hover { background: #6b1414; }
         .btn-dark { background: var(--luxury-black); color: var(--luxury-gold); border: 1px solid var(--luxury-gold); }
@@ -140,7 +200,10 @@
             overflow: hidden;
             aspect-ratio: 16/9;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: zoomIn 0.3s ease;
         }
+        
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .video-wrapper video {
             width: 100%;
@@ -177,6 +240,17 @@
         .chat-messages p { margin: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
         .sender { color: var(--luxury-gold); font-weight: bold; }
         .sys-msg { color: var(--luxury-maroon); font-style: italic; font-weight: bold; }
+        .sys-warn { color: #ff9f43; font-style: italic; font-weight: bold; }
+
+        .user-badge {
+            text-align: center;
+            color: var(--luxury-gold);
+            padding: 10px;
+            background: #000;
+            border-radius: 6px;
+            border: 1px dashed rgba(198, 156, 109, 0.5);
+            margin-bottom: 10px;
+        }
 
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
     </style>
@@ -184,20 +258,32 @@
 </head>
 <body>
 
+    <!-- MODAL NHẬP TÊN ĐẦU TIÊN -->
+    <div id="welcomeModal">
+        <div class="modal-content">
+            <h2>♛ Kính Chào ♛</h2>
+            <p style="color: var(--luxury-grey-light);">Vui lòng nhập biệt danh trước khi vào phòng</p>
+            <input type="text" id="welcomeNameInput" placeholder="VD: GamerPro99" onkeypress="if(event.key === 'Enter') confirmName()">
+            <button class="btn-gold" onclick="confirmName()">Tiến Vào Phòng</button>
+        </div>
+    </div>
+
     <h1>♛ Phòng Live Đa Kết Nối ♛</h1>
     
-    <div class="main-layout">
+    <div class="main-layout" id="mainLayout">
         
+        <!-- CỘT TRÁI: QUẢN LÝ PHÒNG & STREAM -->
         <div class="panel">
-            <h3>ĐĂNG KÝ THÔNG TIN</h3>
-            
-            <div class="control-group">
-                <label>Biệt danh:</label>
-                <input type="text" id="usernameInput" placeholder="VD: GamerPro99">
+            <h3>THÔNG TIN CỦA BẠN</h3>
+            <div class="user-badge">
+                Tên hiển thị: <strong id="displayUsername" style="font-size: 16px;">Đang tải...</strong>
             </div>
 
+            <hr style="border-color: rgba(198, 156, 109, 0.2); width: 100%; margin: 5px 0;">
+
+            <h3>KẾT NỐI PHÒNG</h3>
             <div class="control-group">
-                <label>Tên Phòng:</label>
+                <label>Mã / Tên Phòng:</label>
                 <input type="text" id="roomInput" placeholder="VD: phong-cua-boss">
             </div>
             
@@ -206,15 +292,16 @@
                 <button class="btn-dark" id="btnJoinRoom">Vào Phòng</button>
             </div>
             
-            <p id="roomStatus" style="font-size: 12px; color: var(--luxury-maroon); text-align: center; margin: 0;"></p>
+            <p id="roomStatus" style="font-size: 12px; color: var(--luxury-maroon); text-align: center; margin: 10px 0 0 0;"></p>
 
+            <!-- CẤU HÌNH LIVE BỊ KHÓA CHO ĐẾN KHI VÀO PHÒNG -->
             <div id="liveConfigArea" class="disabled-area">
                 <hr style="border-color: rgba(198, 156, 109, 0.2); width: 100%; margin: 15px 0;">
                 
-                <h3>CẤU HÌNH LIVE</h3>
+                <h3>CẤU HÌNH LIVE PRO</h3>
                 <div class="flex-row control-group">
                     <div>
-                        <label>Phân Giải:</label>
+                        <label>Độ Nét:</label>
                         <select id="resSelect">
                             <option value="480">480p</option>
                             <option value="720">720p</option>
@@ -231,26 +318,27 @@
                     <div>
                         <label>Bitrate:</label>
                         <select id="bitrateSelect">
-                            <option value="2500000">2.5 Mbps</option>
                             <option value="5000000">5 Mbps</option>
-                            <option value="8000000" selected>8 Mbps</option>
-                            <option value="15000000">15 Mbps (Max)</option>
+                            <option value="8000000">8 Mbps</option>
+                            <option value="15000000" selected>15 Mbps</option>
                         </select>
                     </div>
                 </div>
 
-                <button class="btn-gold" id="btnStartStream" style="margin-top: 10px;">Bắt Đầu Phát Live</button>
-                <button class="btn-maroon" id="btnStopStream" style="display:none; margin-top: 10px;">Dừng Phát Live</button>
+                <button class="btn-gold" id="btnStartStream" style="margin-top: 10px;">🔴 Bắt Đầu Phát Live</button>
+                <button class="btn-maroon" id="btnStopStream" style="display:none; margin-top: 10px;">⬛ Dừng Phát Live</button>
             </div>
         </div>
 
+        <!-- CỘT GIỮA: MÀN HÌNH VIDEO GRID -->
         <div class="video-grid" id="videoGrid"></div>
 
+        <!-- CỘT PHẢI: CHAT VÀ THÔNG TIN -->
         <div class="panel">
             <h3>KÊNH TƯƠNG TÁC</h3>
             <div class="chat-box">
                 <div class="chat-messages" id="chatMessages">
-                    <p><span class="sys-msg">Hệ Thống:</span> Hãy tạo hoặc vào phòng để bắt đầu.</p>
+                    <p><span class="sys-msg">Hệ Thống:</span> Chào mừng! Hãy tạo hoặc vào phòng.</p>
                 </div>
                 <div class="flex-row" style="gap:5px;">
                     <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." disabled>
@@ -267,7 +355,7 @@
         // --- BIẾN TOÀN CỤC ---
         let peer = null;
         let myId = "";
-        let myUsername = "Khách";
+        let myUsername = "";
         let isHost = false;
         let myStream = null;
         
@@ -280,18 +368,31 @@
             config: { 'iceServers': [ { urls: 'stun:stun.l.google.com:19302' } ] }
         };
 
+        // UI Elements
         const roomStatus = document.getElementById('roomStatus');
         const videoGrid = document.getElementById('videoGrid');
         const memberCount = document.getElementById('memberCount');
         const liveConfigArea = document.getElementById('liveConfigArea');
 
-        function getEnteredUsername() {
-            const val = document.getElementById('usernameInput').value.trim();
-            if (val) return val;
-            return "Khách_" + Math.floor(1000 + Math.random() * 9000);
+        // --- 0. BƯỚC NHẬP TÊN ĐẦU TIÊN ---
+        function confirmName() {
+            const input = document.getElementById('welcomeNameInput').value.trim();
+            if (!input) {
+                alert("Bạn phải nhập tên để mọi người biết bạn là ai chứ!");
+                return;
+            }
+            myUsername = input;
+            
+            // Ẩn modal và hiện Layout chính
+            document.getElementById('welcomeModal').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('welcomeModal').style.display = 'none';
+                document.getElementById('mainLayout').style.display = 'grid';
+                document.getElementById('displayUsername').innerText = myUsername;
+            }, 500);
         }
 
-        // HÀM ÉP BITRATE VÀ ĐỘ NÉT
+        // --- HÀM ÉP XUNG MẠNG (GIỮ ĐỘ NÉT) ---
         async function forceHighBitrate(call) {
             try {
                 if (!call.peerConnection) return;
@@ -303,8 +404,7 @@
                     const selectedBitrate = parseInt(document.getElementById('bitrateSelect').value);
                     params.encodings[0].maxBitrate = selectedBitrate; 
                     
-                    // LỆNH QUAN TRỌNG: Ép trình duyệt giữ nguyên độ phân giải (1080p),
-                    // chấp nhận rớt chút FPS thay vì làm mờ hình ảnh.
+                    // Ép giữ nguyên độ phân giải, chống mờ
                     params.degradationPreference = 'maintain-resolution';
                     
                     await sender.setParameters(params);
@@ -317,43 +417,45 @@
         // --- 1. XỬ LÝ VÀO / TẠO PHÒNG ---
         document.getElementById('btnCreateRoom').addEventListener('click', () => {
             const rName = document.getElementById('roomInput').value.trim();
-            if(!rName) return alert("Vui lòng nhập tên phòng!");
-            
-            myUsername = getEnteredUsername();
-            if(isHost) myUsername += " (Host♛)";
-            
+            if(!rName) return alert("Vui lòng nhập mã/tên phòng!");
             initPeer('room-' + rName, true);
         });
 
         document.getElementById('btnJoinRoom').addEventListener('click', () => {
             const rName = document.getElementById('roomInput').value.trim();
-            if(!rName) return alert("Vui lòng nhập tên phòng muốn vào!");
-            
-            myUsername = getEnteredUsername();
+            if(!rName) return alert("Vui lòng nhập mã/tên phòng muốn vào!");
             initPeer(null, false, rName);
         });
 
         function initPeer(customId, hostMode, targetRoomName = "") {
             if (peer) peer.destroy();
             
-            roomStatus.innerText = "Đang khởi tạo...";
+            roomStatus.innerText = "Đang kết nối server...";
             peer = customId ? new Peer(customId, peerConfig) : new Peer(peerConfig);
 
             peer.on('open', (id) => {
                 myId = id;
                 isHost = hostMode;
-                if(isHost && !myUsername.includes("Host")) myUsername += "♛";
+                
+                // Gắn mác Host vào tên nếu là chủ phòng
+                if(isHost && !myUsername.includes("Host")) {
+                    myUsername += " ♛";
+                    document.getElementById('displayUsername').innerText = myUsername;
+                }
                 
                 peerUsernames[myId] = myUsername; 
                 
-                roomStatus.innerText = isHost ? "Đã tạo phòng thành công!" : "Đã tham gia phòng!";
+                roomStatus.innerText = isHost ? "✅ Đã tạo phòng thành công!" : "✅ Đã tham gia phòng!";
                 roomStatus.style.color = "var(--luxury-gold)";
                 
-                // MỞ KHÓA KHU VỰC CẤU HÌNH LIVE VÀ CHAT
+                // KHÓA INPUT PHÒNG, MỞ KHÓA CONFIG LIVE VÀ CHAT
+                document.getElementById('roomInput').disabled = true;
+                document.getElementById('btnCreateRoom').disabled = true;
+                document.getElementById('btnJoinRoom').disabled = true;
+                
                 liveConfigArea.classList.remove('disabled-area');
                 document.getElementById('chatInput').disabled = false;
                 document.getElementById('btnSendChat').disabled = false;
-                document.getElementById('usernameInput').disabled = true;
 
                 if (!isHost) {
                     const hostConn = peer.connect('room-' + targetRoomName);
@@ -365,37 +467,48 @@
 
             peer.on('connection', (conn) => { setupDataConnection(conn); });
 
+            // Nhận cuộc gọi (người khác stream cho mình xem)
             peer.on('call', (call) => {
-                call.answer(myStream);
-                
+                call.answer(myStream); // Bắt máy, nếu mình có stream thì gửi ngược lại luôn
                 forceHighBitrate(call); 
                 
                 call.on('stream', (remoteStream) => {
                     addVideoStream(call.peer, remoteStream);
                 });
-                
-                call.on('close', () => {
-                    removeVideoStream(call.peer);
-                });
             });
 
             peer.on('error', (err) => {
                 if (err.type === 'unavailable-id') {
-                    alert("Tên phòng này đã có người tạo. Vui lòng nhấn 'VÀO PHÒNG' hoặc chọn tên phòng khác.");
-                    roomStatus.innerText = "Lỗi trùng tên phòng.";
+                    alert("Tên phòng này đã có người tạo. Vui lòng bấm 'Vào Phòng' thay vì Tạo mới.");
+                    roomStatus.innerText = "❌ Lỗi trùng tên phòng.";
+                } else if (err.type === 'peer-unavailable') {
+                    alert("Không tìm thấy phòng này! Có thể Host chưa tạo phòng.");
+                    roomStatus.innerText = "❌ Không tìm thấy phòng.";
                 } else {
                     console.error(err);
                 }
+                
+                // Mở khóa lại nút nếu lỗi
+                document.getElementById('roomInput').disabled = false;
+                document.getElementById('btnCreateRoom').disabled = false;
+                document.getElementById('btnJoinRoom').disabled = false;
             });
         }
 
-        // --- 2. XỬ LÝ ĐỒNG BỘ P2P ---
+        // --- 2. XỬ LÝ ĐỒNG BỘ P2P VÀ YÊU CẦU STREAM ---
         function setupDataConnection(conn) {
             conn.on('open', () => {
                 connectedPeers.add(conn.peer);
                 dataConnections[conn.peer] = conn;
 
+                // 1. Gửi Tên cho đối phương
                 conn.send({ type: 'HANDSHAKE', username: myUsername });
+                
+                // 2. YÊU CẦU STREAM (GIẢI QUYẾT LỖI VÀO SAU KHÔNG THẤY HÌNH)
+                // Chờ 1 giây để handshake hoàn tất rồi xin luồng hình ảnh
+                setTimeout(() => {
+                    if(conn.open) conn.send({ type: 'REQUEST_STREAM' });
+                }, 1000);
 
                 if (isHost) {
                     const peersData = Array.from(connectedPeers)
@@ -414,14 +527,7 @@
                         }
                     });
                 }
-                
                 updateMemberCount();
-
-                if (myStream) {
-                    const call = peer.call(conn.peer, myStream);
-                    forceHighBitrate(call); 
-                    call.on('stream', (remoteStream) => addVideoStream(conn.peer, remoteStream));
-                }
             });
 
             conn.on('data', (data) => {
@@ -429,6 +535,14 @@
                     peerUsernames[conn.peer] = data.username;
                     sysLog(`<strong>${data.username}</strong> đã tham gia phòng.`);
                     updateVideoLabel(conn.peer);
+                }
+                else if (data.type === 'REQUEST_STREAM') {
+                    // Đối phương (người mới vào) yêu cầu gửi hình. Nếu mình đang live thì call nó ngay!
+                    if (myStream) {
+                        const call = peer.call(conn.peer, myStream);
+                        forceHighBitrate(call);
+                        mediaCalls[conn.peer] = call;
+                    }
                 }
                 else if (data.type === 'PEER_LIST') {
                     data.peers.forEach(p => {
@@ -451,10 +565,18 @@
                 }
             });
 
+            // XỬ LÝ KHÉO LÉO KHI CÓ NGƯỜI THOÁT RA
             conn.on('close', () => {
-                const name = peerUsernames[conn.peer] || conn.peer.substring(0,5);
-                sysLog(`<strong>${name}</strong> đã rời khỏi phòng.`);
+                const isDisconnectedHost = conn.peer.startsWith('room-');
+                const name = peerUsernames[conn.peer] || "Một người";
                 
+                if (isDisconnectedHost) {
+                    sysWarn(`⚠️ CẢNH BÁO: Chủ phòng (${name}) đã thoát! Người mới sẽ không thể vào phòng nữa.`);
+                } else {
+                    sysLog(`<strong>${name}</strong> đã rời khỏi phòng.`);
+                }
+                
+                // Dọn dẹp dữ liệu và XÓA VIDEO NGAY LẬP TỨC
                 connectedPeers.delete(conn.peer);
                 delete dataConnections[conn.peer];
                 delete peerUsernames[conn.peer];
@@ -464,7 +586,7 @@
             });
         }
 
-        // --- 3. PHÁT LIVE MÀN HÌNH (TỐI ƯU CỨNG ĐỘ PHÂN GIẢI) ---
+        // --- 3. PHÁT LIVE MÀN HÌNH CHẤT LƯỢNG CAO ---
         document.getElementById('btnStartStream').addEventListener('click', async () => {
             const resVal = parseInt(document.getElementById('resSelect').value);
             const fpsVal = parseInt(document.getElementById('fpsSelect').value);
@@ -474,7 +596,6 @@
             if(resVal === 480) { w = 854; h = 480; }
 
             try {
-                // Khai báo strict (ideal và max) để ép trình duyệt tuân thủ tuyệt đối cấu hình
                 myStream = await navigator.mediaDevices.getDisplayMedia({
                     video: { 
                         width: { ideal: w, max: w }, 
@@ -484,7 +605,6 @@
                     audio: true
                 });
 
-                // Chuyển contentHint sang 'detail' để ưu tiên giữ độ sắc nét của hình ảnh chi tiết
                 const videoTrack = myStream.getVideoTracks()[0];
                 if (videoTrack) {
                     videoTrack.contentHint = 'detail';
@@ -495,18 +615,18 @@
                 document.getElementById('btnStartStream').style.display = 'none';
                 document.getElementById('btnStopStream').style.display = 'block';
                 
-                // Vô hiệu hóa cấu hình khi đang live để tránh lỗi
                 document.getElementById('resSelect').disabled = true;
                 document.getElementById('fpsSelect').disabled = true;
                 document.getElementById('bitrateSelect').disabled = true;
 
+                // Nếu ấn nút "Stop Sharing" của trình duyệt
                 myStream.getVideoTracks()[0].onended = stopStream;
 
+                // Chủ động gửi Stream cho những người đang có trong phòng
                 connectedPeers.forEach(id => {
                     const call = peer.call(id, myStream);
                     mediaCalls[id] = call;
                     forceHighBitrate(call); 
-                    call.on('stream', (remoteStream) => addVideoStream(id, remoteStream));
                 });
 
             } catch (err) {
@@ -526,7 +646,6 @@
             document.getElementById('btnStartStream').style.display = 'block';
             document.getElementById('btnStopStream').style.display = 'none';
             
-            // Mở khóa lại cấu hình
             document.getElementById('resSelect').disabled = false;
             document.getElementById('fpsSelect').disabled = false;
             document.getElementById('bitrateSelect').disabled = false;
@@ -534,20 +653,25 @@
             mediaCalls = {};
         }
 
-        // --- 4. HIỂN THỊ VIDEO ---
+        // --- 4. HÀM XỬ LÝ HIỂN THỊ VIDEO TRÊN MÀN HÌNH ---
         function addVideoStream(id, stream, isMe = false) {
-            if (document.getElementById('video-wrap-' + id)) return;
+            // Tránh tạo 2 video của cùng 1 người
+            if (document.getElementById('video-wrap-' + id)) {
+                document.getElementById('video-' + id).srcObject = stream;
+                return;
+            }
 
             const wrap = document.createElement('div');
             wrap.className = 'video-wrapper';
             wrap.id = 'video-wrap-' + id;
 
             const vid = document.createElement('video');
+            vid.id = 'video-' + id;
             vid.srcObject = stream;
             vid.autoplay = true;
             vid.playsInline = true;
             vid.controls = !isMe;
-            if (isMe) vid.muted = true;
+            if (isMe) vid.muted = true; // Chống dội âm mình
 
             const label = document.createElement('div');
             label.className = 'video-label';
@@ -611,6 +735,14 @@
             const box = document.getElementById('chatMessages');
             const p = document.createElement('p');
             p.innerHTML = `<span class="sys-msg">Hệ Thống:</span> ${msg}`;
+            box.appendChild(p);
+            box.scrollTop = box.scrollHeight;
+        }
+        
+        function sysWarn(msg) {
+            const box = document.getElementById('chatMessages');
+            const p = document.createElement('p');
+            p.innerHTML = `<span class="sys-warn">${msg}</span>`;
             box.appendChild(p);
             box.scrollTop = box.scrollHeight;
         }
