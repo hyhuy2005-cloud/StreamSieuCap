@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Live Room - Pro Stream</title>
+    <title>Luxury Live Room - Pro Stream Max Quality</title>
     <style>
         /* BẢNG MÀU LUXURY & CSS CƠ BẢN */
         :root {
@@ -188,7 +188,6 @@
     
     <div class="main-layout">
         
-        <!-- CỘT TRÁI: ĐĂNG KÝ TÊN & QUẢN LÝ PHÒNG -->
         <div class="panel">
             <h3>ĐĂNG KÝ THÔNG TIN</h3>
             
@@ -209,7 +208,6 @@
             
             <p id="roomStatus" style="font-size: 12px; color: var(--luxury-maroon); text-align: center; margin: 0;"></p>
 
-            <!-- CẤU HÌNH LIVE BỊ KHÓA CHO ĐẾN KHI VÀO PHÒNG -->
             <div id="liveConfigArea" class="disabled-area">
                 <hr style="border-color: rgba(198, 156, 109, 0.2); width: 100%; margin: 15px 0;">
                 
@@ -246,10 +244,8 @@
             </div>
         </div>
 
-        <!-- CỘT GIỮA: MÀN HÌNH VIDEO GRID -->
         <div class="video-grid" id="videoGrid"></div>
 
-        <!-- CỘT PHẢI: CHAT VÀ THÔNG TIN -->
         <div class="panel">
             <h3>KÊNH TƯƠNG TÁC</h3>
             <div class="chat-box">
@@ -295,7 +291,7 @@
             return "Khách_" + Math.floor(1000 + Math.random() * 9000);
         }
 
-        // HÀM ÉP BITRATE LẤY TỪ SELECT
+        // HÀM ÉP BITRATE VÀ ĐỘ NÉT
         async function forceHighBitrate(call) {
             try {
                 if (!call.peerConnection) return;
@@ -304,13 +300,17 @@
                     const params = sender.getParameters();
                     if (!params.encodings) params.encodings = [{}];
                     
-                    // Đọc Bitrate từ người dùng chọn
                     const selectedBitrate = parseInt(document.getElementById('bitrateSelect').value);
                     params.encodings[0].maxBitrate = selectedBitrate; 
+                    
+                    // LỆNH QUAN TRỌNG: Ép trình duyệt giữ nguyên độ phân giải (1080p),
+                    // chấp nhận rớt chút FPS thay vì làm mờ hình ảnh.
+                    params.degradationPreference = 'maintain-resolution';
+                    
                     await sender.setParameters(params);
                 }
             } catch (e) {
-                console.error("Lỗi ép bitrate:", e);
+                console.error("Lỗi ép thông số:", e);
             }
         }
 
@@ -464,7 +464,7 @@
             });
         }
 
-        // --- 3. PHÁT LIVE MÀN HÌNH (TỐI ƯU MOTION) ---
+        // --- 3. PHÁT LIVE MÀN HÌNH (TỐI ƯU CỨNG ĐỘ PHÂN GIẢI) ---
         document.getElementById('btnStartStream').addEventListener('click', async () => {
             const resVal = parseInt(document.getElementById('resSelect').value);
             const fpsVal = parseInt(document.getElementById('fpsSelect').value);
@@ -474,14 +474,20 @@
             if(resVal === 480) { w = 854; h = 480; }
 
             try {
+                // Khai báo strict (ideal và max) để ép trình duyệt tuân thủ tuyệt đối cấu hình
                 myStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: { width: w, height: h, frameRate: fpsVal },
+                    video: { 
+                        width: { ideal: w, max: w }, 
+                        height: { ideal: h, max: h }, 
+                        frameRate: { ideal: fpsVal, max: fpsVal } 
+                    },
                     audio: true
                 });
 
+                // Chuyển contentHint sang 'detail' để ưu tiên giữ độ sắc nét của hình ảnh chi tiết
                 const videoTrack = myStream.getVideoTracks()[0];
                 if (videoTrack) {
-                    videoTrack.contentHint = 'motion';
+                    videoTrack.contentHint = 'detail';
                 }
 
                 addVideoStream('me', myStream, true);
